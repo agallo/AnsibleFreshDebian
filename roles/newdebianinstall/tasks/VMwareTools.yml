@@ -1,0 +1,25 @@
+# call with
+# ansible-playbook --extra-vars "target=<target IPv4 addr>"
+---
+    - name: Add apt source
+      become: true
+      lineinfile:
+         dest: /etc/apt/sources.list
+         backup: yes
+         insertafter: EOF
+         line: "{{ item.line }}"
+      with_items:
+         - { line: "#Added by Ansible" }
+         - { line: "#repo for VMWare Tools; see http://partnerweb.vmware.com/GOSIG/Debian_8.html" }
+         - { line: "deb http://ftp.debian.org/debian/ jessie main contrib" }
+    - name: Update apt
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+    - name: Install VMWare tools
+      become: true
+      apt: pkg=open-vm-tools state=installed
+
+

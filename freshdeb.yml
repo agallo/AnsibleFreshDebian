@@ -1,0 +1,12 @@
+# this role bootstraps a freshly installed debian 9 server
+# assumptions:
+# during install, no password was given for root (triggers sudo to be installed and only user to be put in the sudoers group
+# during install a user called 'ansibleuser' was created
+# this role needs to be called with the following flags
+# --ask-become-pass --ask-pass
+# because the first login must use a password
+# newer versions of ansible are depricating sudo ...need to update playbook
+---
+- hosts: newhost
+  roles:
+     - newdebianinstall/

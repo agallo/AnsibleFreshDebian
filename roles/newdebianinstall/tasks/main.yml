@@ -1,0 +1,13 @@
+---
+- include: boot-strap-apptitude.yml
+- include: modify-sudo.yml
+- include: Modify_ansibleuser.yml
+- include: add-me.yml
+# - include: Add_user.yml
+- include: secure-ssh
+- include: iptables.yml
+- include: apt_update_upgrade.yml
+- include: install-base_packages
+- include: ntp.yml
+# - include: VMwareTools.yml
+

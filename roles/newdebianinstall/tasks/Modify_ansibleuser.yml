@@ -1,0 +1,35 @@
+# use this playbook first
+# assumes target host is freshly installed and ansibleuser doesn't have a key onboard
+# important steps for installation and preparation
+# during install: no password for root (will cause sudo to be installed and first user to be added to sudoers)
+# after install: add ansibleuser
+#		 add ansibleuser to sudoers group (adduser ansibleuser sudo)
+#		 give ansibleuser a password (will be deleted by this playbook, but needed to bootstrap)
+#		 modify /etc/sudoers to no ask for passwd: %sudo  ALL=(ALL:ALL) NOPASSWD: ALL
+---
+# tasks file for ansible-role-new-user/
+    - name: Create Linux user.
+      become: true
+      user: name=ansibleuser
+            comment="Ansible User"
+            shell=/bin/bash
+
+    - name: Delete password.
+      become: true
+      command: passwd -d ansibleuser
+
+    - name: Create ssh directories.
+      become: true
+      file: path=/home/ansibleuser/.ssh mode=0700 state=directory
+
+    - name: Upload public key to authorized_keys.
+      become: true
+      copy: src=/home/ansibleuser/newansibledir/roles/newdebianinstall/files/ansibleuser_publickey
+            dest=/home/ansibleuser/.ssh/authorized_keys
+            owner=ansibleuser
+            group=ansibleuser
+            mode=0600
+
+    - name: Change owner.
+      become: true
+      file: path=/home/ansibleuser/.ssh owner=ansibleuser group=ansibleuser state=directory recurse=yes

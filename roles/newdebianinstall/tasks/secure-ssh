@@ -1,0 +1,15 @@
+# disable password login via ssh
+# call with
+# ansible-playbook --extra-vars "target=<target IPv4 addr>"
+---
+   - name: Disallow root SSH access.
+     become: true
+     lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no"
+
+   - name: Disallow password authentication.
+     become: true
+     lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no"
+
+   - name: restart ssh
+     become: true
+     service: name=ssh state=restarted 

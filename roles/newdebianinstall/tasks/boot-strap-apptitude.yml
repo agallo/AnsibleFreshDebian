@@ -1,0 +1,11 @@
+# debian 9 doesn't come with aptitude, which is required for ansible
+# this task installs aptitude via the 'command' module
+# also, python-apt is required and in this version of ansible, doesn't self-install
+---
+- name: Install Aptitude via 'command'
+  become: true
+  command: apt-get -y install aptitude
+
+- name: Install python-apt
+  become: true
+  command: apt-get -y install python-apt

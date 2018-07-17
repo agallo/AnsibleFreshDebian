@@ -1,0 +1,9 @@
+# allow members of the sudo group to enable without a password
+---
+    - name: no password for group sudo
+      become: true
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'

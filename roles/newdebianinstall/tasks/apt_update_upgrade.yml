@@ -1,0 +1,10 @@
+# basic apt-get update/upgrade
+# call with
+# ansible-playbook --extra-vars "target=<target IPv4 addr>"
+---
+    - name: Update and upgrade apt packages
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day

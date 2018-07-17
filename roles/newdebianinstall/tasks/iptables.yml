@@ -1,0 +1,37 @@
+# setup iptables on host
+# debian doesn't come with startup scripts
+# basing this config from http://wiki.debian.org/iptables
+# assumes iptables.up.rules and ip6tables.up.rules are in the same directory as the playbook
+# assumes startup scripts are in the same directory as the playbook
+# ^^^? maybe just use linefile to create startup scripts- they're small enough
+# call with
+# ansible-playbook --extra-vars "target = <target IPv4 addr>" 04iptables.yml
+---
+    - name: Copy startup scripts
+      become: true
+      copy: src={{ item }}
+           dest=/etc/network/if-pre-up.d/{{ item }}
+           owner=root
+           group=root
+           mode=0755
+      with_items:
+        - iptables
+        - ip6tables
+
+    - name: Copy rules files
+      become: true
+      copy: src={{ item }}
+           dest=/etc/{{ item }}
+           owner=root
+           group=root
+           mode=0755
+      with_items:
+        - iptables.up.rules
+        - ip6tables.up.rules
+
+    - name: load rules via startup script
+      become: true
+      command: /etc/network/if-pre-up.d/{{ item }}
+      with_items:
+        - iptables
+        - ip6tables

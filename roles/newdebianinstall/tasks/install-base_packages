@@ -1,0 +1,18 @@
+# install some useful packages
+# call with
+# ansible-playbook --extra-vars "target = <target IPv4 addr>"
+---
+    - name: Install selected packages
+      become: true
+      apt: pkg={{ item }} state=installed
+      with_items:
+        - ntp
+        - lldpd
+        - tcpdump
+        - htop
+        - python-pip
+        - multitail
+        - iperf
+        - iperf3
+        - hping3
+        - mtr

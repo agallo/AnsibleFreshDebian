@@ -1,0 +1,32 @@
+# create linux user with existing public key to install in ~/.ssh/authorized_keys
+#   ?maybe use authorized_key module to install key?
+#   see http://docs.ansible.com/ansible/authorized_key_module.html
+# call with
+---
+# tasks file for ansible-role-new-user/
+    - name: Create user me
+      become: true
+      user: name=me
+            comment="me"
+            groups=sudo
+            shell=/bin/bash
+    
+    - name: Delete password.
+      become: true
+      command: passwd -d me
+    
+    - name: Create ssh directories.
+      become: true
+      file: path=/home/me/.ssh mode=0700 state=directory
+    
+    - name: Upload public key to authorized_keys.
+      become: true
+      copy: src=/home/ansibleuser/newansibledir/roles/newdebianinstall/files/akg-public-key
+            dest=/home/me/.ssh/authorized_keys
+            owner=me
+            group=me
+            mode=0600
+    
+    - name: Change owner.
+      become: true
+      file: path=/home/me/.ssh owner=me group=me state=directory recurse=yes

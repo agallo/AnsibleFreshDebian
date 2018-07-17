@@ -1,0 +1,35 @@
+# create linux user with existing public key to install in ~/.ssh/authorized_keys
+#   ?maybe use authorized_key module to install key?
+#   see http://docs.ansible.com/ansible/authorized_key_module.html
+# call with
+# ansible-playbook --extra-vars "target = <target IPv4 addr> username=<username> fullname='<full name>' pubkey=/path/to/public/key"
+---
+# tasks file for ansible-role-new-user/
+- hosts: "{{ target }}"
+  tasks:
+    - name: Create Linux user.
+      become: true
+      user: name={{ username }}
+            comment="{{ fullname }}"
+            groups=sudo
+            shell=/bin/bash
+    
+    - name: Delete password.
+      become: true
+      command: passwd -d {{ username }}
+    
+    - name: Create ssh directories.
+      become: true
+      file: path=/home/{{ username }}/.ssh mode=0700 state=directory
+    
+    - name: Upload public key to authorized_keys.
+      become: true
+      copy: src={{ pubkey }}
+            dest=/home/{{ username }}/.ssh/authorized_keys
+            owner={{ username }}
+            group={{ username }}
+            mode=0600
+    
+    - name: Change owner.
+      become: true
+      file: path=/home/{{ username }}/.ssh owner={{ username }} group={{ username }} state=directory recurse=yes
